@@ -23,8 +23,8 @@ import './App.css';
 //   );
 // }
 
-const GET_PDF_PROPERTIES_URL = "https://gx8vyib51l.execute-api.us-west-2.amazonaws.com/dev";
-const GENERATE_PDF_FROM_CSV_URL = "https://0ci60qkko9.execute-api.us-west-2.amazonaws.com/dev";
+const GET_PDF_PROPERTIES_URL = "https://gx8vyib51l.execute-api.us-west-2.amazonaws.com/dev/";
+const GENERATE_PDF_FROM_CSV_URL = "https://rbc3vgq16a.execute-api.us-west-2.amazonaws.com/dev/";
 
 class CsvInput extends React.Component {
   render() {
@@ -249,12 +249,15 @@ class Conversion extends React.Component {
     };
     fetch(GENERATE_PDF_FROM_CSV_URL, requestOptions)
       .then(response => response.json())
-      .then(responseJson =>
+      .then(responseJson => {
+        console.log(responseJson);
+        console.log(JSON.stringify(responseJson));
         this.setState(
           {
             pdfDataBase64: responseJson.pdfFileData
           }
-        ))
+        );
+      })
       .catch(error => console.log('error', error));
 
     console.log("fin");
