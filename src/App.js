@@ -24,6 +24,7 @@ import './App.css';
 // }
 
 const GET_PDF_PROPERTIES_URL = "https://gx8vyib51l.execute-api.us-west-2.amazonaws.com/dev";
+const GENERATE_PDF_FROM_CSV_URL = "https://0ci60qkko9.execute-api.us-west-2.amazonaws.com/dev";
 
 class CsvInput extends React.Component {
   render() {
@@ -46,11 +47,14 @@ class PageSetting extends React.Component {
   }
 
   render() {
-    const pageSizeTags = this.pageSizes.map(pageSize =>
-      <option>{pageSize}</option>
-    );
+    const pageSizeTags = this.pageSizes.map(pageSize => {
+      const key = "pageSize_" + pageSize;
+      //console.log(key);
+      return <option key={key}>{pageSize}</option>
+      //return <option>{pageSize}</option>
+    });
 
-    let orientationTags = this.orientations.map(orientation =>
+    const orientationTags = this.orientations.map(orientation =>
       <label><input type="radio" name="orientation"/>{orientation}</label>
     );
 
@@ -97,7 +101,7 @@ class CsvHeaderSetting extends React.Component {
 
   render() {
     const fontFamilyTags = this.fontFamilies.map(fontFamily => 
-      <option>{fontFamily}</option>
+      <option key={fontFamily}>{fontFamily}</option>
     );
     return (
       <div>
@@ -152,7 +156,7 @@ class CsvContentSetting extends React.Component {
 
   render() {
     const fontFamilyTags = this.fontFamilies.map(fontFamily => 
-      <option>{fontFamily}</option>
+      <option key={fontFamily}>{fontFamily}</option>
     );
     return (
       <div>
@@ -177,10 +181,91 @@ class CsvContentSetting extends React.Component {
 }
 
 class Conversion extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pdfDataBase64: null
+    };
+  }
+
+  generatePdfFromCsv() {
+    console.log("generatePdfFromCsv");
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    let reqBody = JSON.stringify({
+      csvData: "A,B\na1,b1\na2,b2",
+      pageSetting: {
+        size: "A4",
+        orientation: "縦向き",
+        margin: {
+          top: 20,
+          left: 20,
+          right: 20,
+          bottom: 20
+        }
+      },
+      headerSetting: {
+        fontSize: 15,
+        fontFamily: "mplus1p-bold",
+        markupStart: "【",
+        markupEnd: "】",
+        targetItems: [ "A", "B" ]
+      },
+      contentSetting: {
+        fontSize: 11,
+        fontFamily: "mplus1p-regular"
+      }
+    });
+    let requestOptions = {
+        method: 'PUT',
+        body: reqBody,
+        headers: myHeaders
+    };
+    fetch(GENERATE_PDF_FROM_CSV_URL, requestOptions)
+      .then(response => response.json())
+      .then(responseJson =>
+        this.setState(
+          {
+            pdfDataBase64: responseJson.pdfFileData
+          }
+        ))
+      .catch(error => console.log('error', error));
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    console.log("Clicked");
+    //this.generatePdfFromCsv();
+
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    let reqBody = JSON.stringify({
+      // TODO: Implement
+    });
+    let requestOptions = {
+        method: 'PUT',
+        body: reqBody,
+        headers: myHeaders
+    };
+    fetch(GENERATE_PDF_FROM_CSV_URL, requestOptions)
+      .then(response => response.json())
+      .then(responseJson =>
+        this.setState(
+          {
+            pdfDataBase64: responseJson.pdfFileData
+          }
+        ))
+      .catch(error => console.log('error', error));
+
+    console.log("fin");
+  }
+
   render() {
     return (
       <p>
-        <input type="submit" value="PDFに変換する"/>
+        <form onSubmit={this.handleSubmit}>
+          <button type="submit">PDFに変換する</button>
+        </form>
       </p>
     );
   }
@@ -195,21 +280,20 @@ class App extends React.Component {
   }
 
   getProperty() {
-    var myHeaders = new Headers();
+    let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var requestOptions = {
+    let requestOptions = {
         method: 'GET',
         headers: myHeaders
     };
     fetch(GET_PDF_PROPERTIES_URL, requestOptions)
       .then(response => response.json())
-      .then(responseJson => {
+      .then(responseJson =>
         this.setState(
           {
             pdfProperty: responseJson
           }
-        );
-      })
+        ))
       .catch(error => console.log('error', error));
   }
 
