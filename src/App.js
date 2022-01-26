@@ -48,10 +48,7 @@ class PageSetting extends React.Component {
 
   render() {
     const pageSizeTags = this.pageSizes.map(pageSize => {
-      const key = "pageSize_" + pageSize;
-      //console.log(key);
-      return <option key={key}>{pageSize}</option>
-      //return <option>{pageSize}</option>
+      return <option>{pageSize}</option>
     });
 
     const orientationTags = this.orientations.map(orientation =>
@@ -184,12 +181,14 @@ class Conversion extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pdfDataBase64: null
+      pdfFile: null
     };
   }
 
-  generatePdfFromCsv() {
-    console.log("generatePdfFromCsv");
+  handleSubmit(e) {
+    e.preventDefault();
+    console.log("Clicked");
+
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     let reqBody = JSON.stringify({
@@ -221,56 +220,91 @@ class Conversion extends React.Component {
         body: reqBody,
         headers: myHeaders
     };
-    fetch(GENERATE_PDF_FROM_CSV_URL, requestOptions)
-      .then(response => response.json())
-      .then(responseJson =>
-        this.setState(
-          {
-            pdfDataBase64: responseJson.pdfFileData
-          }
-        ))
-      .catch(error => console.log('error', error));
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-    console.log("Clicked");
-    //this.generatePdfFromCsv();
-
-    let myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    let reqBody = JSON.stringify({
-      // TODO: Implement
-    });
-    let requestOptions = {
-        method: 'PUT',
-        body: reqBody,
-        headers: myHeaders
+    const procRespJson = (json) => {
+      console.log("responseJsonの処理");
+      const convertFileObjectFromBase64 = (PdfFileData) => {
+        console.log("conversion to file object from base64");
+        let bin = atob(PdfFileData);
+        let buf = new Uint8Array(bin.length);
+        for (let index = 0; index < bin.length; index++) {
+          buf[index] = bin.charCodeAt(index);
+        }
+        return new File([buf.buffer],"tmp.pdf", {type: "application/pdf"});
+      };
+      const file = convertFileObjectFromBase64(json.PdfFileData);
+      console.log(this);
+      this.setState(
+        {
+          pdfFile: file
+        }
+      );
     };
     fetch(GENERATE_PDF_FROM_CSV_URL, requestOptions)
       .then(response => response.json())
-      .then(responseJson => {
+      .then((responseJson => {
+        console.log("responseの処理");
         console.log(responseJson);
         console.log(JSON.stringify(responseJson));
+        console.log("this:");
+        console.log(this);
+        const file = ((pdfFileData) => {
+          console.log("conversion to file object from base64");
+          // console.log(pdfFileData);
+          let bin = atob(pdfFileData);
+          let buf = new Uint8Array(bin.length);
+          for (let index = 0; index < bin.length; index++) {
+            buf[index] = bin.charCodeAt(index);
+          }
+          return new File([buf.buffer],"tmp.pdf", {type: "application/pdf"});
+        })(responseJson.PdfFileData);
         this.setState(
           {
-            pdfDataBase64: responseJson.pdfFileData
+            pdfFile: file
           }
         );
-      })
+      }).bind(this))
       .catch(error => console.log('error', error));
-
     console.log("fin");
   }
 
+  downloadPdf() {
+    window.location.href = this.state.pdfFilePath;
+  }
+
   render() {
-    return (
-      <p>
-        <form onSubmit={this.handleSubmit}>
-          <button type="submit">PDFに変換する</button>
-        </form>
-      </p>
-    );
+    if (this.state.pdfFilePath == null) {
+      return (
+        <div>
+          <p>
+            <form onSubmit={this.handleSubmit}>
+              <button type="submit">PDFに変換する</button>
+            </form>
+          </p>
+          <p>
+            <button onClick={this.downloadPdf} disabled>PDFダウンロード</button>
+          </p>
+          <p>
+            <label>※変換したら必ずダウンロードしてください</label>
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <p>
+            <form onSubmit={this.handleSubmit}>
+              <button type="submit" disabled>PDFに変換する</button>
+            </form>
+          </p>
+          <p>
+            <button onClick={this.downloadPdf}>PDFダウンロード</button>
+          </p>
+          <p>
+            <label>※変換したら必ずダウンロードしてください</label>
+          </p>
+        </div>
+      );
+    }
   }
 }
 
