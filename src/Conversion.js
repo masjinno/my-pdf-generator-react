@@ -56,7 +56,18 @@ const Conversion = () => {
           return new File([buf.buffer], "tmp.pdf", {type: "application/pdf"});
         })(responseJson.PdfFileData);
         console.log(file);
+        console.log(Object.keys(file));
+        console.log(JSON.stringify(file));
+        console.log(JSON.stringify(file.name));
         setPdfFile(file);
+
+        console.log(JSON.stringify(window.webkitURL));
+        const myUrl = window.URL || window.webkitUrl;
+        const blob = new Blob([pdfFile], { type: pdfFile.type });
+        const url = myUrl.createObjectURL(blob);
+        console.log(`url=${url}`);
+
+        setPdfFileLink(url);
       })
       .catch(error => console.log('error', error));
     console.log("fin");
@@ -67,22 +78,29 @@ const Conversion = () => {
   }
 
   const [pdfFile, setPdfFile] = useState(null);
+  const [pdfFileLink, setPdfFileLink] = useState(null);
 
   return (
     <div>
       <p>
-        { pdfFile ?
+        {
+          pdfFile ?
           <button onClick={onClickConvert} disabled>PDFに変換する</button> :
           <button onClick={onClickConvert}>PDFに変換する</button>
         }
       </p>
       <p>
-        { pdfFile ?
-          <button onClick={onClickDownloadPdf}>PDF ダウンロード</button> :
+        {
+          pdfFile ?
+          <>
+            <a download={pdfFile.name} href={pdfFileLink}>PDF ダウンロード</a><br/>
+            <label>name = {pdfFile.name}</label><br/>
+            <label>href = {window.URL}</label><br/>
+            <label>pdfFile.blob is null? = {pdfFile.blob==null ? 'true' : 'false'}</label>
+          </>
+          :
           <button onClick={onClickDownloadPdf} disabled>PDF ダウンロード</button>
         }
-      </p>
-      <p>
         <label>※変換したら必ずダウンロードしてください</label>
       </p>
     </div>
