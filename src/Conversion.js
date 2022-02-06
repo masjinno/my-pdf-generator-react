@@ -3,10 +3,8 @@ import React, {useState} from 'react';
 const GENERATE_PDF_FROM_CSV_URL = "https://rbc3vgq16a.execute-api.us-west-2.amazonaws.com/dev/";
 
 const Conversion = () => {
-  const onClickConvert = () => {
-    // e.preventDefault();
-    console.log("Clicked");
 
+  const onClickConvert = () => {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     // reqBodyはダミー値
@@ -42,12 +40,8 @@ const Conversion = () => {
     fetch(GENERATE_PDF_FROM_CSV_URL, requestOptions)
       .then(response => response.json())
       .then(responseJson => {
-        console.log("responseの処理");
-        console.log(responseJson);
         console.log(JSON.stringify(responseJson));
         const file = ((pdfFileData) => {
-          console.log("conversion to file object from base64");
-          // console.log(pdfFileData);
           let bin = atob(pdfFileData);
           let buf = new Uint8Array(bin.length);
           for (let index = 0; index < bin.length; index++) {
@@ -55,51 +49,32 @@ const Conversion = () => {
           }
           return new File([buf.buffer], "tmp.pdf", {type: "application/pdf"});
         })(responseJson.PdfFileData);
-        console.log(file);
-        console.log(Object.keys(file));
-        console.log(JSON.stringify(file));
-        console.log(JSON.stringify(file.name));
-        setPdfFile(file);
 
-        console.log(JSON.stringify(window.webkitURL));
         const myUrl = window.URL || window.webkitUrl;
-        const blob = new Blob([pdfFile], { type: pdfFile.type });
-        const url = myUrl.createObjectURL(blob);
-        console.log(`url=${url}`);
-
-        setPdfFileLink(url);
+        const blob = new Blob([file], { type: file.type });
+        const objectUrl = myUrl.createObjectURL(blob);
+        setPdfFileLink(objectUrl);
       })
       .catch(error => console.log('error', error));
-    console.log("fin");
   };
 
-  const onClickDownloadPdf = () => {
-    console.log("click downloadPdf");
-  }
-
-  const [pdfFile, setPdfFile] = useState(null);
   const [pdfFileLink, setPdfFileLink] = useState(null);
 
   return (
     <div>
       <p>
         {
-          pdfFile ?
+          pdfFileLink ?
           <button onClick={onClickConvert} disabled>PDFに変換する</button> :
           <button onClick={onClickConvert}>PDFに変換する</button>
         }
       </p>
       <p>
         {
-          pdfFile ?
-          <>
-            <a download={pdfFile.name} href={pdfFileLink}>PDF ダウンロード</a><br/>
-            <label>name = {pdfFile.name}</label><br/>
-            <label>href = {window.URL}</label><br/>
-            <label>pdfFile.blob is null? = {pdfFile.blob==null ? 'true' : 'false'}</label>
-          </>
+          pdfFileLink ?
+          <a download="output.pdf" href={pdfFileLink}>PDF ダウンロード</a>
           :
-          <button onClick={onClickDownloadPdf} disabled>PDF ダウンロード</button>
+          <a download="output.pdf" href={pdfFileLink} disabled>PDF ダウンロード</a>
         }
         <label>※変換したら必ずダウンロードしてください</label>
       </p>
