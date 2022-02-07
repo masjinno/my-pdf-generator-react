@@ -1,54 +1,50 @@
 import React from 'react';
 
-class PageSetting extends React.Component {
-  constructor(props) {
-    super(props);
-    this.pageSizes = props.pageSizes;
-    this.orientations = props.orientations;
-  }
+const PageSetting = (props) => {
+  const pageSizeTags = props.pageSizes.map(pageSize =>
+    <option key={pageSize}>{pageSize}</option>
+  );
 
-  render() {
-    const pageSizeTags = this.pageSizes.map(pageSize => {
-      return <option>{pageSize}</option>
-    });
+  let isChecked = false;
+  const orientationTags = props.orientations.map(orientation => {
+    if(!isChecked) {
+      isChecked = true;
+      return <label><input type="radio" name="orientation" defaultChecked/>{orientation}</label>;
+    } else {
+      return <label><input type="radio" name="orientation"/>{orientation}</label>;
+    }
+  });
 
-    const orientationTags = this.orientations.map(orientation =>
-      <label><input type="radio" name="orientation"/>{orientation}</label>
-    );
-
-    return (
-      <div>
-        <h2>ページ設定</h2>
-        <p>
-          <label>
-            用紙サイズ
-            <select>
-              {pageSizeTags}
-            </select>
-          </label>
-        </p>
-        <p>
-          <label>用紙の向き</label>
-          {orientationTags}
-        </p>
-        <p>
-          <label>余白</label>
-          <label>上
-            <input type="text"/>
-          </label>
-          <label>左
-            <input type="text"/>
-          </label>
-          <label>右
-            <input type="text"/>
-          </label>
-          <label>下
-            <input type="text"/>
-          </label>
-        </p>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h2>ページ設定</h2>
+      <p>
+        <label>用紙サイズ</label>
+        <select defaultValue="A4">
+          {pageSizeTags}
+        </select>
+      </p>
+      <p>
+        <label>用紙の向き</label>
+        {orientationTags}
+      </p>
+      <p>
+        <label>余白</label>
+        <label>上
+          <input type="text" defaultValue="20"/>
+        </label>
+        <label>左
+          <input type="text" defaultValue="20"/>
+        </label>
+        <label>右
+          <input type="text" defaultValue="20"/>
+        </label>
+        <label>下
+          <input type="text" defaultValue="20"/>
+        </label>
+      </p>
+    </div>
+  );
 }
 
 export default PageSetting;

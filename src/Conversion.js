@@ -2,35 +2,43 @@ import React, {useState} from 'react';
 
 const GENERATE_PDF_FROM_CSV_URL = "https://rbc3vgq16a.execute-api.us-west-2.amazonaws.com/dev/";
 
-const Conversion = () => {
+const Conversion = (props) => {
+  if (isNaN(Number(props.headerFontSize)) ||
+      isNaN(Number(props.contentFontSize))) {
+    alert('ERROR!');
+  }
+
+  const pageSetting = {
+    size: props.pageSize,
+    orientation: props.pageOrientation,
+    margin: {
+      top: props.pageMargin[0],
+      left: props.pageMargin[1],
+      right: props.pageMargin[2],
+      bottom: props.pageMargin[3]
+    }
+  };
+  const headerSetting = {
+    fontSize: Number(props.headerFontSize),
+    fontFamily: props.headerFontFamily,
+    markupStart: props.headerMarkupStart,
+    markupEnd: props.headerMarkupEnd,
+    targetItems: props.targetItems
+  };
+  const contentSetting = {
+    fontSize: Number(props.contentFontSize),
+    fontFamily: props.contentFontFamily
+  }
 
   const onClickConvert = () => {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    // reqBodyはダミー値
+    // reqBodyのcsvDataはダミー値
     let reqBody = JSON.stringify({
       csvData: "A,B\na1,b1\na2,b2",
-      pageSetting: {
-        size: "A4",
-        orientation: "縦向き",
-        margin: {
-          top: 20,
-          left: 20,
-          right: 20,
-          bottom: 20
-        }
-      },
-      headerSetting: {
-        fontSize: 15,
-        fontFamily: "mplus1p-bold",
-        markupStart: "【",
-        markupEnd: "】",
-        targetItems: [ "A", "B" ]
-      },
-      contentSetting: {
-        fontSize: 11,
-        fontFamily: "mplus1p-regular"
-      }
+      pageSetting: pageSetting,
+      headerSetting: headerSetting,
+      contentSetting: contentSetting
     });
     let requestOptions = {
         method: 'PUT',

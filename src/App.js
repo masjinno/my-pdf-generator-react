@@ -64,6 +64,8 @@ class App extends React.Component {
     if (!this.state.pdfProperty) {
       return <div>...Loading</div>;
     }
+    const margin = [ 20, 21, 22, 23 ];
+    const targetItems = [ "A", "B" ];
     return (
       <div>
         <h1>CSV 2 PDF</h1>
@@ -73,7 +75,18 @@ class App extends React.Component {
           orientations={this.state.pdfProperty.Orientations}/>
         <CsvHeaderSetting fontFamilies={this.state.pdfProperty.FontFamilies}/>
         <CsvContentSetting fontFamilies={this.state.pdfProperty.FontFamilies}/>
-        <Conversion/>
+        <Conversion
+          csvData="A,B\na1,b1\na2,b2"
+          pageSize="A4"
+          pageOrientation="縦向き"
+          pageMargin={margin}
+          headerFontSize="15"
+          headerFontFamily="mplus1p-bold"
+          headerMarkupStart="【"
+          headerMarkupEnd="】"
+          targetItems={targetItems}
+          contentFontSize="11"
+          contentFontFamily="mplus1p-regular"/>
         <div>
           <h2>デバッグエリア</h2>
           <p>
