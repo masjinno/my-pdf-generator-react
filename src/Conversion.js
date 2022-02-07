@@ -33,9 +33,8 @@ const Conversion = (props) => {
   const onClickConvert = () => {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    // reqBodyのcsvDataはダミー値
     let reqBody = JSON.stringify({
-      csvData: "A,B\na1,b1\na2,b2",
+      csvData: props.csvData,
       pageSetting: pageSetting,
       headerSetting: headerSetting,
       contentSetting: contentSetting
