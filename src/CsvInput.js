@@ -1,21 +1,16 @@
 import React, {useState} from 'react';
 
-const CsvInput = () => {
+const CsvInput = (props) => {
   const uploadFile = (event) => {
-    console.log("uploadFile");
     if (event.target.files.length == 0) {
+      props.setCsvData(null);
       return;
     }
     const file = event.target.files[0];
     const reader = new FileReader();
-    reader.onload = () => {
-      console.log(reader.result);
-      return setCsvData(reader.result);
-    }
+    reader.onload = () => props.setCsvData(reader.result);
     reader.readAsText(file);
   }
-
-  const [csvData, setCsvData] = useState(null);
 
   return (
     <p>

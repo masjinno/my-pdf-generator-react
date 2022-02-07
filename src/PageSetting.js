@@ -20,7 +20,9 @@ const PageSetting = (props) => {
       <h2>ページ設定</h2>
       <p>
         <label>用紙サイズ</label>
-        <select defaultValue="A4">
+        <select
+          defaultValue="A4"
+          onChange={e => props.setPageSize(e.target.value)}>
           {pageSizeTags}
         </select>
       </p>

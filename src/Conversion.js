@@ -31,6 +31,10 @@ const Conversion = (props) => {
   }
 
   const onClickConvert = () => {
+    if (!props.csvData) {
+      alert(`Error!\nCSV is empty or null`);
+      return;
+    }
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     let reqBody = JSON.stringify({
@@ -39,6 +43,9 @@ const Conversion = (props) => {
       headerSetting: headerSetting,
       contentSetting: contentSetting
     });
+    console.log("★★★");
+    console.log(reqBody);
+    console.log("★★★");
     let requestOptions = {
         method: 'PUT',
         body: reqBody,
@@ -71,9 +78,10 @@ const Conversion = (props) => {
     <div>
       <p>
         {
-          pdfFileLink ?
-          <button onClick={onClickConvert} disabled>PDFに変換する</button> :
-          <button onClick={onClickConvert}>PDFに変換する</button>
+          //pdfFileLink ?
+          props.csvData ?
+          <button onClick={onClickConvert}>PDFに変換する</button> :
+          <button onClick={onClickConvert} disabled>PDFに変換する</button>
         }
       </p>
       <p>
@@ -82,7 +90,6 @@ const Conversion = (props) => {
           <a download="output.pdf" href={pdfFileLink}>PDF ダウンロード</a> :
           <a download="output.pdf" href={pdfFileLink} disabled>PDF ダウンロード</a>
         }
-        <label>※変換したら必ずダウンロードしてください</label>
       </p>
     </div>
   );
