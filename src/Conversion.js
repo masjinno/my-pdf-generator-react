@@ -5,7 +5,7 @@ const GENERATE_PDF_FROM_CSV_URL = "https://rbc3vgq16a.execute-api.us-west-2.amaz
 const Conversion = (props) => {
   if (isNaN(Number(props.headerFontSize)) ||
       isNaN(Number(props.contentFontSize))) {
-    alert('ERROR!');
+    alert(`Error!\nfont size is ${NaN}`);
   }
 
   const pageSetting = {
@@ -79,8 +79,7 @@ const Conversion = (props) => {
       <p>
         {
           pdfFileLink ?
-          <a download="output.pdf" href={pdfFileLink}>PDF ダウンロード</a>
-          :
+          <a download="output.pdf" href={pdfFileLink}>PDF ダウンロード</a> :
           <a download="output.pdf" href={pdfFileLink} disabled>PDF ダウンロード</a>
         }
         <label>※変換したら必ずダウンロードしてください</label>
