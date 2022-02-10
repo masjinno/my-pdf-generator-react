@@ -18,6 +18,7 @@ const Conversion = (props) => {
       bottom: props.pageMargin[3]
     }
   };
+  console.log(props.targetItems);
   const headerSetting = {
     fontSize: Number(props.headerFontSize),
     fontFamily: props.headerFontFamily,
@@ -51,6 +52,7 @@ const Conversion = (props) => {
         body: reqBody,
         headers: myHeaders
     };
+    console.log("GeneratePdfFromCsv calling");
     fetch(GENERATE_PDF_FROM_CSV_URL, requestOptions)
       .then(response => response.json())
       .then(responseJson => {
@@ -78,7 +80,6 @@ const Conversion = (props) => {
     <div>
       <p>
         {
-          //pdfFileLink ?
           props.csvData ?
           <button onClick={onClickConvert}>PDFに変換する</button> :
           <button onClick={onClickConvert} disabled>PDFに変換する</button>
