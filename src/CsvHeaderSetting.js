@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 
 const CsvHeaderSetting = (props) => {
   const defaultFontSize = 14;
@@ -11,26 +11,32 @@ const CsvHeaderSetting = (props) => {
     props.setFontFamily(defaultFontFamily);
     props.setMarkupStart(defaultMarkupStart);
     props.setMarkupEnd(defaultMarkupEnd);
+    props.setTargetItems(props.targetItems);
   }, []);
 
   const fontFamilyElements = props.fontFamilies.map(fontFamily =>
     <option key={fontFamily}>{fontFamily}</option>
   );
-  const targetItemElements = !props.targetItems ? <>-</> :
-    props.targetItems.map(targetItem =>
+
+  let targetItemElements = <>-</>;
+  if (props.targetItems) {
+    props.setTargetItems(props.targetItems);
+    let idNum = 0;
+    targetItemElements = props.targetItems.map(targetItem =>
       <label>
         <input
           type="checkbox"
+          key={(idNum++) + "_" + targetItem}
           defaultChecked
-          key={targetItem}
+          disabled
           onChange={
             e => {
-              console.log(`${targetItem} is ${e.target.checked}`);
-              let checkedTargetItemElements = targetItemElements.filter(elm =>{
+              const checkedTargetItemElements = targetItemElements.filter(elm =>{
+                // ここ↓のcheckedがundefinedになる。解決策を求む。
+                // console.log(elm.props.children[0].props.checked);
+                // return elm.props.children[0].props.checked;
                 return true;
-              }).map(elm => {
-                return elm.props.children[1];
-              });
+              }).map(elm => elm.props.children[1]);
               console.log(checkedTargetItemElements);
               props.setTargetItems(checkedTargetItemElements);
             }
@@ -38,7 +44,7 @@ const CsvHeaderSetting = (props) => {
           {targetItem}
       </label>
     );
-  props.setTargetItems(props.targetItems);
+  }
   return (
     <div>
       <h2>CSVヘッダ設定</h2>
@@ -74,7 +80,7 @@ const CsvHeaderSetting = (props) => {
           onChange={e => props.setMarkupEnd(e.target.value)}/>
       </p>
       <p>
-        <label>出力対象項目</label>
+        <label key="targetItemsLabel">出力対象項目<b>※未実装機能</b></label>
         {targetItemElements}
       </p>
     </div>

@@ -45,6 +45,8 @@ const App = () => {
   const [headerMarkupStart, setHeaderMarkupStart] = useState(null);
   const [headerMarkupEnd, setHeaderMarkupEnd] = useState(null);
   const [targetItems, setTargetItems] = useState(null);
+  const [contentFontSize, setContentFontSize] = useState(null);
+  const [contentFontFamily, setContentFontFamily] = useState(null);
 
   // 初回のみプロパティ取得を実行
   useEffect(() => {
@@ -66,11 +68,6 @@ const App = () => {
   }
 
   const pageMargin = [pageMarginTop, pageMarginLeft, pageMarginRight, pageMarginBottom];
-  // const targetItems = [ "性別", "年齢", "楽器経験", "楽器は何ですか？",
-  //   "ご来場は、何回目ですか？", "本日の演奏会を、何でお知りになりましたか？（複数回答可）",
-  //   "詳細", "エルガー／エニグマ変奏曲", "マーラー／交響曲第1番「巨人」", "お気づきの点"
-  // ];
-  //const allItems = csvData.split()
   return (
     <div>
       <h1>CSV 2 PDF</h1>
@@ -92,7 +89,10 @@ const App = () => {
         setMarkupEnd={setHeaderMarkupEnd}
         targetItems={csvHeaderItems}
         setTargetItems={setTargetItems}/>
-      <CsvContentSetting fontFamilies={pdfProperty.FontFamilies}/>
+      <CsvContentSetting
+        setFontSize={setContentFontSize}
+        fontFamilies={pdfProperty.FontFamilies}
+        setFontFamily={setContentFontFamily}/>
       <Conversion
         csvData={csvData}
         pageSize={pageSize}
@@ -103,8 +103,8 @@ const App = () => {
         headerMarkupStart={headerMarkupStart}
         headerMarkupEnd={headerMarkupEnd}
         targetItems={targetItems}
-        contentFontSize="11"
-        contentFontFamily="mplus1p-regular"/>
+        contentFontSize={contentFontSize}
+        contentFontFamily={contentFontFamily}/>
     </div>
   );
 }

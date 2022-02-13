@@ -14,33 +14,22 @@ const PageSetting = (props) => {
     props.setPageMarginBottom(defaultMargin);
   }, []);
 
+  let idNum = 0;
   const pageSizeElements = props.pageSizes.map(pageSize =>
-    <option key={pageSize}>{pageSize}</option>
+    <option key={(idNum++) + "_" + pageSize}>{pageSize}</option>
   );
 
   const orientationElements = props.orientations.map(orientation => {
-    if(orientation == defaultOrientation) {
-      return (
-        <label>
-          <input
-            type="radio"
-            name="orientation"
-            onClick={e => props.setPageOrientation(orientation)}
-            defaultChecked/>
-          {orientation}
-        </label>
-      );
-    } else {
-      return (
-        <label>
-          <input
-            type="radio"
-            name="orientation"
-            onClick={e => props.setPageOrientation(orientation)}/>
-            {orientation}
-        </label>
-      );
-    }
+    return (
+      <label>
+        <input
+          type="radio"
+          name="orientation"
+          onClick={e => props.setPageOrientation(orientation)}
+          defaultChecked={orientation==defaultOrientation}/>
+        {orientation}
+      </label>
+    );
   });
 
   return (

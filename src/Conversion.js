@@ -5,20 +5,25 @@ const GENERATE_PDF_FROM_CSV_URL = "https://rbc3vgq16a.execute-api.us-west-2.amaz
 const Conversion = (props) => {
   if (isNaN(Number(props.headerFontSize)) ||
       isNaN(Number(props.contentFontSize))) {
-    alert(`Error!\nfont size is ${NaN}`);
+    alert(`Error!\nFont size is ${NaN}`);
+  }
+  if (isNaN(Number(props.pageMargin[0])) ||
+      isNaN(Number(props.pageMargin[1])) ||
+      isNaN(Number(props.pageMargin[2])) ||
+      isNaN(Number(props.pageMargin[3]))) {
+    alert(`Error!\nPage margin is ${NaN}`);
   }
 
   const pageSetting = {
     size: props.pageSize,
     orientation: props.pageOrientation,
     margin: {
-      top: props.pageMargin[0],
-      left: props.pageMargin[1],
-      right: props.pageMargin[2],
-      bottom: props.pageMargin[3]
+      top: Number(props.pageMargin[0]),
+      left: Number(props.pageMargin[1]),
+      right: Number(props.pageMargin[2]),
+      bottom: Number(props.pageMargin[3])
     }
   };
-  console.log(props.targetItems);
   const headerSetting = {
     fontSize: Number(props.headerFontSize),
     fontFamily: props.headerFontFamily,
@@ -44,9 +49,7 @@ const Conversion = (props) => {
       headerSetting: headerSetting,
       contentSetting: contentSetting
     });
-    console.log("★★★");
     console.log(reqBody);
-    console.log("★★★");
     let requestOptions = {
         method: 'PUT',
         body: reqBody,
@@ -70,6 +73,7 @@ const Conversion = (props) => {
         const blob = new Blob([file], { type: file.type });
         const objectUrl = myUrl.createObjectURL(blob);
         setPdfFileLink(objectUrl);
+        alert("PDFダウンロードのリンクをクリックしてPDFファイルをダウンロードしてください");
       })
       .catch(error => console.log('error', error));
   };

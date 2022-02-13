@@ -1,6 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 const CsvContentSetting = (props) => {
+  const defaultFontSize = 11;
+  const defaultFontFamily = "mplus1p-regular";
+
+  useEffect(() => {
+    props.setFontSize(defaultFontSize);
+    props.setFontFamily(defaultFontFamily);
+  }, []);
+
   const fontFamilyTags = props.fontFamilies.map(fontFamily => 
     <option key={fontFamily}>{fontFamily}</option>
   );
@@ -10,13 +18,18 @@ const CsvContentSetting = (props) => {
       <p>
         <label>
           フォントサイズ
-          <input type="text" defaultValue="11"/>
+          <input
+            type="text"
+            defaultValue={defaultFontSize}
+            onChange={e => props.setFontSize(e.target.value)}/>
         </label>
       </p>
       <p>
         <label>
           フォント名
-          <select defaultValue="mplus1p-regular">
+          <select
+            defaultValue={defaultFontFamily}
+            onChange={e => props.setFontFamily(e.target.value)}>
             {fontFamilyTags}
           </select>
         </label>
